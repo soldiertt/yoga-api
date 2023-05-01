@@ -28,6 +28,7 @@ public class Slot {
     private Integer participantsCount;
 
     @ManyToMany(mappedBy = "slots")
+    @OrderBy("createdTime ASC")
     private List<UserCard> cards;
 
     @Column(updatable = false, nullable = false)

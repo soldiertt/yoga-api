@@ -35,6 +35,7 @@ public class YogaUser {
     private String phone;
 
     @OneToMany(mappedBy = "owner")
+    @OrderBy("createdTime ASC")
     private List<UserCard> cards;
 
     @Column(updatable = false, nullable = false)

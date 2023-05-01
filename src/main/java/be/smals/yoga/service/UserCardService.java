@@ -7,14 +7,18 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.function.Predicate;
+
+import static be.smals.yoga.model.CardStatus.ACTIVE;
+import static be.smals.yoga.model.CardStatus.EXPIRED;
 
 @Service
 @RequiredArgsConstructor
 public class UserCardService {
 
     private final UserCardRepository userCardRepository;
-    private final UserService userService;
 
     @Transactional
     public UserCard save(final UserCard userCard) {
@@ -43,4 +47,16 @@ public class UserCardService {
                 .orElseThrow(() -> new EntityNotFoundException("Cannot find card with id " + id));
     }
 
+    public void checkForCardExpiration(final List<UserCard> cards) {
+        final Predicate<UserCard> cardIsFull = card -> ACTIVE.equals(card.getStatus()) &&
+                card.getSlots() != null && card.getCapacity().equals(card.getSlots().size());
+        cards.stream().filter(cardIsFull).forEach(this::checkNeedExpiredStatus);
+    }
+
+    private void checkNeedExpiredStatus(final UserCard card) {
+        if (card.getSlots().stream().allMatch(slot -> slot.getCourseDate().isBefore(LocalDate.now()))) {
+            card.setStatus(EXPIRED);
+            save(card);
+        }
+    }
 }
