@@ -15,12 +15,12 @@ public class PrivateUserApi {
 
     @GetMapping("/users")
     public YogaUser getUser() {
-        return Sanitizer.forPrivateUser(userService.findByUserId(userId(), true));
+        return Sanitizer.forPrivateUser(userService.findByUserId(userId()));
     }
 
     @PatchMapping("/users")
     public void updateMetadata(@RequestBody final YogaUser user) {
-        userService.updateMetadata(userId(), user);
+        userService.update(userId(), user);
     }
 
     private static String userId() {

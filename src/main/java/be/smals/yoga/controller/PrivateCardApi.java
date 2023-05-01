@@ -25,7 +25,7 @@ public class PrivateCardApi {
 
     @PostMapping("/cards")
     public UserCard create() throws MessagingException {
-        final YogaUser user = userService.findByUserId(userId(), false);
+        final YogaUser user = userService.findByUserId(userId());
         final var newCard = new UserCard();
         newCard.setStatus(CardStatus.PENDING);
         newCard.setOwner(user);
@@ -40,7 +40,7 @@ public class PrivateCardApi {
     @PostMapping("/cards/slots")
     public UserCard bookSlot(@RequestBody final SlotBooking slotBooking) throws MessagingException {
         Assert.notNull(slotBooking.getSlotId(), "SlotId is required in body");
-        final YogaUser user = userService.findByUserId(userId(), false);
+        final YogaUser user = userService.findByUserId(userId());
 
         final var firstBookableCard = user.getCards().stream()
                 .filter(c -> CardStatus.ACTIVE.equals(c.getStatus()) && c.getSlots().size() < c.getCapacity())

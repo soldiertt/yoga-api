@@ -19,7 +19,7 @@ public class ManageUserApi {
 
     @GetMapping
     public List<YogaUser> findAll() {
-        return Sanitizer.forManageUsers(userService.findAll(true));
+        return Sanitizer.forManageUsers(userService.findAll());
     }
 
 }

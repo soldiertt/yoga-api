@@ -17,14 +17,18 @@ public class Sanitizer {
 
     public static UserCard forPrivateCard(final UserCard card) {
         card.setOwner(null);
-        card.getSlots().forEach(cardSlot -> {
-            cardSlot.setCards(null);
-        });
+        if (card.getSlots() != null) {
+            card.getSlots().forEach(cardSlot -> {
+                cardSlot.setCards(null);
+            });
+        }
         return card;
     }
 
     public static YogaUser forPrivateUser(final YogaUser user) {
-        user.getCards().forEach(Sanitizer::forPrivateCard);
+        if (user.getCards() != null) {
+            user.getCards().forEach(Sanitizer::forPrivateCard);
+        }
         return user;
     }
 
@@ -35,24 +39,32 @@ public class Sanitizer {
 
     public static UserCard forManageCard(final UserCard card) {
         card.getOwner().setCards(null);
-        card.getSlots().forEach(slot -> {
-            slot.setCards(null);
-        });
+        if (card.getSlots() != null) {
+            card.getSlots().forEach(slot -> {
+                slot.setCards(null);
+            });
+        }
         return card;
     }
 
     public static List<Slot> forManageSlots(final List<Slot> slots) {
         slots.forEach(slot -> {
-            slot.getCards().forEach(card -> {
-                card.getOwner().setCards(null);
-                card.setSlots(null);
-            });
+            if (slot.getCards() != null) {
+                slot.getCards().forEach(card -> {
+                    card.getOwner().setCards(null);
+                    card.setSlots(null);
+                });
+            }
         });
         return slots;
     }
 
     public static List<YogaUser> forManageUsers(final List<YogaUser> users) {
-        users.forEach(user -> user.getCards().forEach(Sanitizer::forManageCard));
+        users.forEach(user -> {
+            if (user.getCards() != null) {
+                user.getCards().forEach(Sanitizer::forManageCard);
+            }
+        });
         return users;
     }
 }

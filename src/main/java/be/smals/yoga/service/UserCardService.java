@@ -1,6 +1,5 @@
 package be.smals.yoga.service;
 
-import be.smals.yoga.repository.Auth0Client;
 import be.smals.yoga.entity.UserCard;
 import be.smals.yoga.repository.UserCardRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -15,7 +14,7 @@ import java.util.List;
 public class UserCardService {
 
     private final UserCardRepository userCardRepository;
-    private final Auth0Client auth0Api;
+    private final UserService userService;
 
     @Transactional
     public UserCard save(final UserCard userCard) {
@@ -36,11 +35,7 @@ public class UserCardService {
     }
 
     public List<UserCard> findAll() {
-        final var userCards = userCardRepository.findAllByOrderByCreatedTimeAsc();
-        userCards.forEach(card -> {
-            card.getOwner().setCards(null);
-        });
-        return userCards;
+        return userCardRepository.findAllByOrderByCreatedTimeAsc();
     }
 
     public UserCard findById(final Long id) {

@@ -25,13 +25,13 @@ public class YogaUser {
     @Column(nullable = false, updatable = false, unique = true)
     private String userId;
 
-    @Transient
+    @Column(nullable = false, unique = true)
     private String email;
-    @Transient
+
     private String firstName;
-    @Transient
+
     private String lastName;
-    @Transient
+
     private String phone;
 
     @OneToMany(mappedBy = "owner")
@@ -41,7 +41,8 @@ public class YogaUser {
     @CreatedDate
     private LocalDateTime createdTime;
 
-    public YogaUser(final String userId) {
+    public YogaUser(final String userId, final String email) {
         this.userId = userId;
+        this.email = email;
     }
 }

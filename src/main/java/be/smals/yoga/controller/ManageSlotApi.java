@@ -19,15 +19,7 @@ public class ManageSlotApi {
 
     @GetMapping
     public List<Slot> findAll() {
-        final var slots = slotService.findAll();
-        slots.forEach(slot -> {
-            if (slot.getCards() != null) {
-                slot.getCards().forEach(card -> {
-                    card.setOwner(userService.fillWithMetadata(card.getOwner()));
-                });
-            }
-        });
-        return Sanitizer.forManageSlots(slots);
+        return Sanitizer.forManageSlots(slotService.findAll());
     }
 
     @PostMapping

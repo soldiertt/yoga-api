@@ -1,7 +1,7 @@
 package be.smals.yoga.service;
 
-import be.smals.yoga.repository.Auth0Client;
 import be.smals.yoga.entity.YogaUser;
+import be.smals.yoga.repository.Auth0Client;
 import be.smals.yoga.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -14,34 +14,46 @@ import java.util.List;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final Auth0Client auth0Api;
+    private final Auth0Client auth0Client;
 
-    public List<YogaUser> findAll(final boolean withMetadata) {
-        final var users = userRepository.findAll();
-        if (withMetadata) {
-            users.forEach(this::fillWithMetadata);
-        }
-        return users;
+    public List<YogaUser> findAll() {
+        return userRepository.findAll();
     }
 
-    public YogaUser findByUserId(final String userId, final boolean withMetadata) {
+    public YogaUser findByUserId(final String userId) {
         final var optUser = userRepository.findByUserId(userId);
-        return optUser.map(dbUser -> withMetadata ? fillWithMetadata(dbUser) : dbUser)
-                .orElseGet(() -> userRepository.save(new YogaUser(userId)));
+        return optUser.orElseGet(() -> {
+            final var auth0User = auth0Client.userInfo(userId);
+            final var yogaUser = new YogaUser(userId, auth0User.getEmail());
+            if (auth0User.getGiven_name() != null) {
+                yogaUser.setFirstName(auth0User.getGiven_name());
+            }
+            if (auth0User.getFamily_name() != null) {
+                yogaUser.setLastName(auth0User.getFamily_name());
+            }
+            if (auth0User.getPhone_number() != null) {
+                yogaUser.setPhone(auth0User.getPhone_number());
+            }
+            return userRepository.save(yogaUser);
+        });
     }
 
-    public YogaUser fillWithMetadata(final YogaUser user) {
-        final var auth0User = auth0Api.userInfo(user.getUserId());
-        user.setFirstName(auth0User.getUser_metadata().getFirst_name());
-        user.setLastName(auth0User.getUser_metadata().getLast_name());
-        user.setPhone(auth0User.getUser_metadata().getPhone());
-        user.setEmail(auth0User.getEmail());
-        return user;
+    public void update(final String userId, final YogaUser partialUser) {
+        final var optUser = userRepository.findByUserId(userId);
+        optUser.ifPresent(user -> {
+            if (partialUser.getFirstName() != null) {
+                user.setFirstName(partialUser.getFirstName());
+            }
+            if (partialUser.getLastName() != null) {
+                user.setLastName(partialUser.getLastName());
+            }
+            if (partialUser.getPhone() != null) {
+                user.setPhone(partialUser.getPhone());
+            }
+            userRepository.save(user);
+        });
     }
 
-    public void updateMetadata(final String userId, final YogaUser user) {
-        auth0Api.updateUser(userId, user);
-    }
     @Transactional
     public YogaUser save(final YogaUser user) {
         return userRepository.save(user);
