@@ -38,9 +38,9 @@ public class UserService {
         });
     }
 
-    public void update(final String userId, final YogaUser partialUser) {
+    public YogaUser update(final String userId, final YogaUser partialUser) {
         final var optUser = userRepository.findByUserId(userId);
-        optUser.ifPresent(user -> {
+        return optUser.map(user -> {
             if (partialUser.getFirstName() != null) {
                 user.setFirstName(partialUser.getFirstName());
             }
@@ -50,8 +50,8 @@ public class UserService {
             if (partialUser.getPhone() != null) {
                 user.setPhone(partialUser.getPhone());
             }
-            userRepository.save(user);
-        });
+            return userRepository.save(user);
+        }).orElse(null);
     }
 
     @Transactional

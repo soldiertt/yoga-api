@@ -14,7 +14,7 @@ public interface MailText {
             <p>Nous avons bien reçu votre demande de carte pour un abonnement 10 séances.<br/>
             Nous vous remercions pour votre fidelité.
             </p>
-            <p>Prix: 120€</p>
+            <p>Prix: 150€</p>
             <p>Après avoir commandé cette carte, veuillez payer le montant à l'aide d'un virement bancaire
             avec les références suivantes:</p>
             <p>

@@ -26,8 +26,8 @@ public class PrivateUserApi {
     }
 
     @PatchMapping
-    public void updateMetadata(@RequestBody final YogaUser user) {
-        userService.update(userId(), user);
+    public YogaUser updateMetadata(@RequestBody final YogaUser user) {
+        return userService.update(userId(), user);
     }
 
     private static String userId() {

@@ -21,8 +21,8 @@ public class UserCard {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, updatable = false, columnDefinition = "decimal default 120.00")
-    private Float price = 120.0f;
+    @Column(nullable = false, updatable = false, columnDefinition = "decimal default 150.00")
+    private Float price = 150.0f;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
