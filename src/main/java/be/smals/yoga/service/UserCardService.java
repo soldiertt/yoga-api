@@ -54,7 +54,7 @@ public class UserCardService {
     }
 
     private void checkNeedExpiredStatus(final UserCard card) {
-        if (card.getSlots().stream().allMatch(slot -> slot.getCourseDate().isBefore(LocalDate.now()))) {
+        if (card.getCreatedTime().isBefore(LocalDate.now().minusMonths(6).atStartOfDay()) || card.getSlots().stream().allMatch(slot -> slot.getCourseDate().isBefore(LocalDate.now()))) {
             card.setStatus(EXPIRED);
             save(card);
         }

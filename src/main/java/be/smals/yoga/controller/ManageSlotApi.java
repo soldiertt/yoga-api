@@ -15,7 +15,6 @@ import java.util.List;
 public class ManageSlotApi {
 
     private final SlotService slotService;
-    private final UserService userService;
 
     @GetMapping
     public List<Slot> findAll() {

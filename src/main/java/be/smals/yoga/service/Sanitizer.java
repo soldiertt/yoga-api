@@ -10,6 +10,7 @@ public class Sanitizer {
 
     public static List<Slot> forPublicSlots(final List<Slot> slots) {
         slots.forEach(slot -> {
+            slot.setParticipantsCount(slot.getCards().size());
             slot.setCards(null);
         });
         return slots;
