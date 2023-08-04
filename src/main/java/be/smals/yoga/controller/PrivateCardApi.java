@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import static be.smals.yoga.model.MailText.*;
+import static be.smals.yoga.model.Settings.ADMIN_EMAIL;
 
 @RestController
 @RequestMapping("/private/cards")
@@ -28,9 +29,8 @@ public class PrivateCardApi {
         final var newCard = new UserCard();
         newCard.setStatus(CardStatus.PENDING);
         newCard.setOwner(user);
-        // TODO change TO
-        mailService.sendSimpleMessage("soldiertt@gmail.com", SUBJECT_USER_CARD_REQUEST, BODY_USER_CARD_REQUEST);
-        mailService.sendSimpleMessage("soldiertt@gmail.com", SUBJECT_ADMIN_CARD_REQUEST, BODY_ADMIN_CARD_REQUEST);
+        mailService.sendSimpleMessage(user.getEmail(), SUBJECT_USER_CARD_REQUEST, BODY_USER_CARD_REQUEST);
+        mailService.sendSimpleMessage(ADMIN_EMAIL, SUBJECT_ADMIN_CARD_REQUEST, BODY_ADMIN_CARD_REQUEST);
         user.getCards().add(newCard);
         userService.save(user);
         return Sanitizer.forPrivateCard(userCardService.save(newCard));

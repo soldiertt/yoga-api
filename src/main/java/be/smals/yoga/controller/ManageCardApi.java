@@ -29,8 +29,8 @@ public class ManageCardApi {
     @PatchMapping("/{id}")
     public UserCard update(@PathVariable final Long id, @RequestBody final UserCard userCard) throws MessagingException {
         if (id.equals(userCard.getId())) {
-            // TODO change TO
-            mailService.sendSimpleMessage("soldiertt@gmail.com", SUBJECT_USER_HAS_CARD_VALIDATED, BODY_USER_HAS_CARD_VALIDATED);
+            final var card = userCardService.findById(id);
+            mailService.sendSimpleMessage(card.getOwner().getEmail(), SUBJECT_USER_HAS_CARD_VALIDATED, BODY_USER_HAS_CARD_VALIDATED);
             return Sanitizer.forManageCard(userCardService.update(userCard));
         }
         return null;

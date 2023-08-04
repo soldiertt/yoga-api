@@ -12,6 +12,7 @@ import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.*;
 
 import static be.smals.yoga.model.MailText.*;
+import static be.smals.yoga.model.Settings.ADMIN_EMAIL;
 
 @RestController
 @RequestMapping("/private")
@@ -37,11 +38,10 @@ public class PrivateSlotApi {
         final var slot = slotService.findById(slotBooking.getSlotId());
         final var card = firstBookableCard.get();
         card.getSlots().add(slot);
-        mailService.sendSimpleMessage("soldiertt@gmail.com", SUBJECT_ADMIN_SLOT_BOOKING + slot.getCourseDate(),
+        mailService.sendSimpleMessage(ADMIN_EMAIL, SUBJECT_ADMIN_SLOT_BOOKING + slot.getCourseDate(),
                 BODY_ADMIN_SLOT_BOOKING);
         if (Boolean.TRUE.equals(slotBooking.getEmailConfirmation())) {
-            // TODO change TO
-            mailService.sendSimpleMessage("soldiertt@gmail.com", SUBJECT_USER_SLOT_BOOKING,
+            mailService.sendSimpleMessage(user.getEmail(), SUBJECT_USER_SLOT_BOOKING,
                     String.format(BODY_USER_SLOT_BOOKING, slot.getCourseDate(), slot.getCourseTime()));
         }
         return Sanitizer.forPrivateCard(userCardService.save(card));
@@ -54,7 +54,7 @@ public class PrivateSlotApi {
             throw new IllegalArgumentException("Cannot find any valid card with id " + cardId);
         }
         card.getSlots().removeIf(s -> s.getId().equals(slotId));
-        mailService.sendSimpleMessage("soldiertt@gmail.com", SUBJECT_ADMIN_SLOT_CANCELLED, BODY_ADMIN_SLOT_CANCELLED);
+        mailService.sendSimpleMessage(ADMIN_EMAIL, SUBJECT_ADMIN_SLOT_CANCELLED, BODY_ADMIN_SLOT_CANCELLED);
         return Sanitizer.forPrivateCard(userCardService.save(card));
     }
 
