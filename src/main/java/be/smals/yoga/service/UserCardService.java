@@ -47,6 +47,7 @@ public class UserCardService {
                 .orElseThrow(() -> new EntityNotFoundException("Cannot find card with id " + id));
     }
 
+    @Transactional
     public void checkForCardExpiration(final List<UserCard> cards) {
         final Predicate<UserCard> cardIsFull = card -> ACTIVE.equals(card.getStatus()) &&
                 card.getSlots() != null && card.getCapacity().equals(card.getSlots().size());
@@ -54,9 +55,9 @@ public class UserCardService {
     }
 
     private void checkNeedExpiredStatus(final UserCard card) {
-        if (card.getCreatedTime().isBefore(LocalDate.now().minusMonths(6).atStartOfDay()) || card.getSlots().stream().allMatch(slot -> slot.getCourseDate().isBefore(LocalDate.now()))) {
+        if (card.getExpirationTime().isBefore(LocalDate.now().atStartOfDay()) || card.getSlots().stream().allMatch(slot -> slot.getCourseDate().isBefore(LocalDate.now()))) {
             card.setStatus(EXPIRED);
-            save(card);
+            userCardRepository.save(card);
         }
     }
 }
