@@ -28,7 +28,7 @@ public class PrivateCardApi {
 
   @PostMapping("/long")
   public UserCard createLong() throws MessagingException {
-    final var expirationTime = LocalDateTime.now().plusMonths(6);
+    final var expirationTime = LocalDateTime.now().plusYears(1);
     return saveCard(150.0f, expirationTime);
   }
 
