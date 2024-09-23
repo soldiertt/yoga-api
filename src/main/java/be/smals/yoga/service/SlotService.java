@@ -26,7 +26,7 @@ public class SlotService {
     }
 
     public List<Slot> findAll() {
-        return slotRepository.findAllByOrderByCourseDate();
+        return slotRepository.findAllByOrderByCourseTimestamp();
     }
 
     public List<Slot> findAllFutureSlots() {

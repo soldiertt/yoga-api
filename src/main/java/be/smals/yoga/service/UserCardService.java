@@ -4,6 +4,7 @@ import be.smals.yoga.entity.UserCard;
 import be.smals.yoga.repository.UserCardRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -55,7 +56,7 @@ public class UserCardService {
     }
 
     private void checkNeedExpiredStatus(final UserCard card) {
-        if (card.getExpirationTime().isBefore(LocalDate.now().atStartOfDay()) || card.getSlots().stream().allMatch(slot -> slot.getCourseDate().isBefore(LocalDate.now()))) {
+        if (card.getExpirationTime().isBefore(LocalDate.now().atStartOfDay()) || card.getSlots().stream().allMatch(slot -> slot.getCourseTimestamp().isBefore(LocalDateTime.now()))) {
             card.setStatus(EXPIRED);
             userCardRepository.save(card);
         }

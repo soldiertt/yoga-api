@@ -20,7 +20,7 @@ public interface MailText {
             avec les références suivantes:</p>
             <p>
                 Nom: Yoga En Pévèle<br/>
-                N° de compte : FR4545 4545 4512 2585<br/>
+                N° de compte : FR76 3002 7171 3500 0203 9110 110<br/>
                 Communication: Votre nom + prénom
             </p>
             <p>Votre demande sera traitée dès que possible, après réception du paiement (compter 3 jours ouvrables),

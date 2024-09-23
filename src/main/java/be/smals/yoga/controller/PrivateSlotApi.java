@@ -38,11 +38,11 @@ public class PrivateSlotApi {
         final var slot = slotService.findById(slotBooking.getSlotId());
         final var card = firstBookableCard.get();
         card.getSlots().add(slot);
-        mailService.sendSimpleMessage(ADMIN_EMAIL, SUBJECT_ADMIN_SLOT_BOOKING + slot.getCourseDate(),
+        mailService.sendSimpleMessage(ADMIN_EMAIL, SUBJECT_ADMIN_SLOT_BOOKING + slot.getCourseTimestamp(),
                 BODY_ADMIN_SLOT_BOOKING);
         if (Boolean.TRUE.equals(slotBooking.getEmailConfirmation())) {
             mailService.sendSimpleMessage(user.getEmail(), SUBJECT_USER_SLOT_BOOKING,
-                    String.format(BODY_USER_SLOT_BOOKING, slot.getCourseDate(), slot.getCourseTime()));
+                    String.format(BODY_USER_SLOT_BOOKING, slot.getCourseTimestamp().toLocalDate(), slot.getCourseTime()));
         }
         return Sanitizer.forPrivateCard(userCardService.save(card));
     }

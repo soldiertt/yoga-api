@@ -10,8 +10,8 @@ import java.util.List;
 @Repository
 public interface SlotRepository extends JpaRepository<Slot, Long> {
 
-    List<Slot> findAllByOrderByCourseDate();
+    List<Slot> findAllByOrderByCourseTimestamp();
 
-    @Query("select s from Slot s where s.courseDate >= now() order by s.courseDate")
+    @Query("select s from Slot s where s.courseTimestamp >= now() order by s.courseTimestamp")
     List<Slot> findAllFutureSlots();
 }

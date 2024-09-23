@@ -41,7 +41,7 @@ public class UserCard {
     private YogaUser owner;
 
     @ManyToMany
-    @OrderBy("courseDate ASC")
+    @OrderBy("courseTimestamp ASC")
     private List<Slot> slots;
 
     @Column(updatable = false, nullable = false)
