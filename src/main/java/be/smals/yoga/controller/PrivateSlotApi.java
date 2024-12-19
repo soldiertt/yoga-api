@@ -6,6 +6,7 @@ import be.smals.yoga.model.CardStatus;
 import be.smals.yoga.model.SlotBooking;
 import be.smals.yoga.service.*;
 import jakarta.mail.MessagingException;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.Assert;
@@ -26,16 +27,21 @@ public class PrivateSlotApi {
 
     @PostMapping("/cards/slots")
     public UserCard bookSlot(@RequestBody final SlotBooking slotBooking) throws MessagingException {
-        Assert.notNull(slotBooking.getSlotId(), "SlotId is required in body");
+        final var slotId = slotBooking.getSlotId();
+        Assert.notNull(slotId, "SlotId is required in body");
         final YogaUser user = userService.findByUserId(userId());
-
+        final var slot = slotService.findById(slotId);
+        if (slot.getCourseTimestamp().isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("Cannot book slot with course timestamp " + slot.getCourseTimestamp() + " in the past (id: " + slotId + ")");
+        }
         final var firstBookableCard = user.getCards().stream()
-                .filter(c -> CardStatus.ACTIVE.equals(c.getStatus()) && c.getSlots().size() < c.getCapacity())
+                .filter(c -> CardStatus.ACTIVE.equals(c.getStatus())
+                    && c.getSlots().size() < c.getCapacity()
+                    && c.getExpirationTime().isAfter(slot.getCourseTimestamp()))
                 .findFirst();
         if (firstBookableCard.isEmpty()) {
             throw new IllegalArgumentException("Cannot find any valid card to book " + slotBooking);
         }
-        final var slot = slotService.findById(slotBooking.getSlotId());
         final var card = firstBookableCard.get();
         card.getSlots().add(slot);
         mailService.sendSimpleMessage(ADMIN_EMAIL, SUBJECT_ADMIN_SLOT_BOOKING + slot.getCourseTimestamp(),
