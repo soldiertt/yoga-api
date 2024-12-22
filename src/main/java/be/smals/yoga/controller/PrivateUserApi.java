@@ -20,6 +20,7 @@ public class PrivateUserApi {
     public YogaUser getUser() {
         final var user = userService.findByUserId(userId());
         if (user.getCards() != null) {
+            cardService.checkForFullCardExpiration(user.getCards());
             cardService.checkForCardExpiration(user.getCards());
         }
         return Sanitizer.forPrivateUser(user);

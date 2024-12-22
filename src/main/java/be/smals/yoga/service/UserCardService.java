@@ -49,10 +49,22 @@ public class UserCardService {
     }
 
     @Transactional
-    public void checkForCardExpiration(final List<UserCard> cards) {
+    public void checkForFullCardExpiration(final List<UserCard> cards) {
         final Predicate<UserCard> cardIsFull = card -> ACTIVE.equals(card.getStatus()) &&
                 card.getSlots() != null && card.getCapacity().equals(card.getSlots().size());
         cards.stream().filter(cardIsFull).forEach(this::checkNeedExpiredStatus);
+    }
+
+    @Transactional
+    public void checkForCardExpiration(final List<UserCard> cards) {
+        cards.stream().filter(card -> ACTIVE.equals(card.getStatus())).forEach(this::checkIsExpired);
+    }
+
+    private void checkIsExpired(final UserCard card) {
+        if (card.getExpirationTime().isBefore(LocalDateTime.now())) {
+            card.setStatus(EXPIRED);
+            userCardRepository.save(card);
+        }
     }
 
     private void checkNeedExpiredStatus(final UserCard card) {
