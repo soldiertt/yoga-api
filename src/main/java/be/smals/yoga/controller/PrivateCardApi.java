@@ -29,13 +29,13 @@ public class PrivateCardApi {
   @PostMapping("/long")
   public UserCard createLong() throws MessagingException {
     final var expirationTime = LocalDateTime.now().plusYears(1);
-    return saveCard(150.0f, expirationTime);
+    return saveCard(160.0f, expirationTime);
   }
 
   @PostMapping("/short")
   public UserCard createShort() throws MessagingException {
-    final var expirationTime = LocalDateTime.of(2025, 4, 3, 0, 0);
-    return saveCard(135.0f, expirationTime);
+    final var expirationTime = LocalDateTime.of(2025, 12, 13, 0, 0);
+    return saveCard(140.0f, expirationTime);
   }
 
   private UserCard saveCard(final Float cardPrice, final LocalDateTime expirationTime) throws MessagingException {

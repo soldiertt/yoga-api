@@ -1,7 +1,7 @@
 # Local dev
 
 1. Need to start Docker for windows
-2. Go to docker project and start yoga db (cd /yoga && docker compose up)
+2. Go to docker project and start yoga db (cd yoga && docker compose up)
 3. Start this app with dev profile
 
 # App deployment
