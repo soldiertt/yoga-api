@@ -6,6 +6,7 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -19,58 +20,62 @@ import static be.smals.yoga.model.CardStatus.EXPIRED;
 @RequiredArgsConstructor
 public class UserCardService {
 
-    private final UserCardRepository userCardRepository;
+  private final UserCardRepository userCardRepository;
 
-    @Transactional
-    public UserCard save(final UserCard userCard) {
-        return userCardRepository.save(userCard);
-    }
+  @Transactional
+  public UserCard save(final UserCard userCard) {
+    return userCardRepository.save(userCard);
+  }
 
-    @Transactional
-    public UserCard update(final UserCard partialUserCard) {
-        return userCardRepository.findById(partialUserCard.getId()).map(userCard -> {
-            userCard.setStatus(partialUserCard.getStatus());
-            return userCard;
-        }).orElse(null);
-    }
+  @Transactional
+  public UserCard update(final UserCard partialUserCard) {
+    return userCardRepository.findById(partialUserCard.getId()).map(userCard -> {
+      userCard.setStatus(partialUserCard.getStatus());
+      return userCard;
+    }).orElse(null);
+  }
 
-    @Transactional
-    public void delete(final Long id) {
-        userCardRepository.deleteById(id);
-    }
+  @Transactional
+  public void delete(final Long id) {
+    userCardRepository.deleteById(id);
+  }
 
-    public List<UserCard> findAll() {
-        return userCardRepository.findAllByOrderByCreatedTimeAsc();
-    }
+  public List<UserCard> findAll() {
+    return userCardRepository.findAllByOrderByCreatedTimeAsc();
+  }
 
-    public UserCard findById(final Long id) {
-        return userCardRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Cannot find card with id " + id));
-    }
+  public List<UserCard> findAllWithSlots() {
+    return userCardRepository.findAllWithSlotsByOrderByCreatedTimeAsc();
+  }
 
-    @Transactional
-    public void checkForFullCardExpiration(final List<UserCard> cards) {
-        final Predicate<UserCard> cardIsFull = card -> ACTIVE.equals(card.getStatus()) &&
-                card.getSlots() != null && card.getCapacity().equals(card.getSlots().size());
-        cards.stream().filter(cardIsFull).forEach(this::checkNeedExpiredStatus);
-    }
+  public UserCard findById(final Long id) {
+    return userCardRepository.findById(id)
+        .orElseThrow(() -> new EntityNotFoundException("Cannot find card with id " + id));
+  }
 
-    @Transactional
-    public void checkForCardExpiration(final List<UserCard> cards) {
-        cards.stream().filter(card -> ACTIVE.equals(card.getStatus())).forEach(this::checkIsExpired);
-    }
+  @Transactional
+  public void checkForFullCardExpiration(final List<UserCard> cards) {
+    final Predicate<UserCard> cardIsFull = card -> ACTIVE.equals(card.getStatus()) &&
+        card.getSlots() != null && card.getCapacity().equals(card.getSlots().size());
+    cards.stream().filter(cardIsFull).forEach(this::checkNeedExpiredStatus);
+  }
 
-    private void checkIsExpired(final UserCard card) {
-        if (card.getExpirationTime().isBefore(LocalDateTime.now())) {
-            card.setStatus(EXPIRED);
-            userCardRepository.save(card);
-        }
-    }
+  @Transactional
+  public void checkForCardExpiration(final List<UserCard> cards) {
+    cards.stream().filter(card -> ACTIVE.equals(card.getStatus())).forEach(this::checkIsExpired);
+  }
 
-    private void checkNeedExpiredStatus(final UserCard card) {
-        if (card.getExpirationTime().isBefore(LocalDate.now().atStartOfDay()) || card.getSlots().stream().allMatch(slot -> slot.getCourseTimestamp().isBefore(LocalDateTime.now()))) {
-            card.setStatus(EXPIRED);
-            userCardRepository.save(card);
-        }
+  private void checkIsExpired(final UserCard card) {
+    if (card.getExpirationTime().isBefore(LocalDateTime.now())) {
+      card.setStatus(EXPIRED);
+      userCardRepository.save(card);
     }
+  }
+
+  private void checkNeedExpiredStatus(final UserCard card) {
+    if (card.getExpirationTime().isBefore(LocalDate.now().atStartOfDay()) || card.getSlots().stream().allMatch(slot -> slot.getCourseTimestamp().isBefore(LocalDateTime.now()))) {
+      card.setStatus(EXPIRED);
+      userCardRepository.save(card);
+    }
+  }
 }
