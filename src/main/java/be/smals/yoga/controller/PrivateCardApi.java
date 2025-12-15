@@ -34,7 +34,7 @@ public class PrivateCardApi {
 
   @PostMapping("/short")
   public UserCard createShort() throws MessagingException {
-    final var expirationTime = LocalDateTime.of(2025, 12, 13, 0, 0);
+    final var expirationTime = LocalDateTime.of(2026, 4, 11, 0, 0);
     return saveCard(140.0f, expirationTime);
   }
 
