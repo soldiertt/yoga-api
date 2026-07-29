@@ -29,18 +29,24 @@ public class PrivateCardApi {
   @PostMapping("/long")
   public UserCard createLong() throws MessagingException {
     final var expirationTime = LocalDateTime.now().plusYears(1);
-    return saveCard(160.0f, expirationTime);
+    return saveCard(160.0f, expirationTime, 10);
   }
 
   @PostMapping("/short")
   public UserCard createShort() throws MessagingException {
-    final var expirationTime = LocalDateTime.of(2026, 7, 6, 0, 0);
-    return saveCard(140.0f, expirationTime);
+    final var expirationTime = LocalDateTime.of(2026, 12, 18, 0, 0);
+    return saveCard(140.0f, expirationTime, 10);
   }
 
-  private UserCard saveCard(final Float cardPrice, final LocalDateTime expirationTime) throws MessagingException {
+  @PostMapping("/medium")
+  public UserCard createMedium() throws MessagingException {
+    final var expirationTime = LocalDateTime.of(2026, 12, 18, 0, 0);
+    return saveCard(80.0f, expirationTime, 5);
+  }
+
+  private UserCard saveCard(final Float cardPrice, final LocalDateTime expirationTime, final Integer capacity) throws MessagingException {
     final YogaUser user = userService.findByUserId(userId());
-    final var newCard = new UserCard(cardPrice, expirationTime, user);
+    final var newCard = new UserCard(cardPrice, expirationTime, capacity, user);
     mailService.sendSimpleMessage(user.getEmail(), SUBJECT_USER_CARD_REQUEST,
         String.format(BODY_USER_CARD_REQUEST, cardPrice, expirationTime.format(formatter)));
     mailService.sendSimpleMessage(ADMIN_EMAIL, SUBJECT_ADMIN_CARD_REQUEST, BODY_ADMIN_CARD_REQUEST);

@@ -31,8 +31,8 @@ public class UserCard {
     @Enumerated(EnumType.STRING)
     private CardStatus status;
 
-    @Column(nullable = false, updatable = false, columnDefinition = "integer default 10")
-    private Integer capacity = 10;
+    @Column(nullable = false, updatable = false)
+    private Integer capacity;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime expirationTime;
@@ -52,9 +52,10 @@ public class UserCard {
     @LastModifiedDate
     private LocalDateTime updatedTime;
 
-    public UserCard(final Float price, final LocalDateTime expirationTime, final YogaUser owner) {
+    public UserCard(final Float price, final LocalDateTime expirationTime, final Integer capacity, final YogaUser owner) {
         this.price = price;
         this.expirationTime = expirationTime;
+        this.capacity = capacity;
         this.owner = owner;
         this.status = CardStatus.PENDING;
     }
