@@ -30,7 +30,8 @@ public class ManageCardApi {
     public UserCard update(@PathVariable final Long id, @RequestBody final UserCard userCard) throws MessagingException {
         if (id.equals(userCard.getId())) {
             final var card = userCardService.findById(id);
-            mailService.sendSimpleMessage(card.getOwner().getEmail(), SUBJECT_USER_HAS_CARD_VALIDATED, BODY_USER_HAS_CARD_VALIDATED);
+            mailService.sendSimpleMessage(card.getOwner().getEmail(), SUBJECT_USER_HAS_CARD_VALIDATED,
+                    String.format(BODY_USER_HAS_CARD_VALIDATED, card.getCapacity(), card.getCapacity()));
             return Sanitizer.forManageCard(userCardService.update(userCard));
         }
         return null;

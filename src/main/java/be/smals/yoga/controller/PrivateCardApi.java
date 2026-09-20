@@ -48,7 +48,7 @@ public class PrivateCardApi {
     final YogaUser user = userService.findByUserId(userId());
     final var newCard = new UserCard(cardPrice, expirationTime, capacity, user);
     mailService.sendSimpleMessage(user.getEmail(), SUBJECT_USER_CARD_REQUEST,
-        String.format(BODY_USER_CARD_REQUEST, cardPrice, expirationTime.format(formatter)));
+        String.format(BODY_USER_CARD_REQUEST, capacity, cardPrice, expirationTime.format(formatter)));
     mailService.sendSimpleMessage(ADMIN_EMAIL, SUBJECT_ADMIN_CARD_REQUEST, BODY_ADMIN_CARD_REQUEST);
     user.getCards().add(newCard);
     userService.save(user);
