@@ -40,7 +40,7 @@ public class PrivateCardApi {
 
   @PostMapping("/medium")
   public UserCard createMedium() throws MessagingException {
-    final var expirationTime = LocalDateTime.of(2026, 12, 18, 0, 0);
+    final var expirationTime = LocalDateTime.of(2027, 7, 6, 0, 0);
     return saveCard(80.0f, expirationTime, 5);
   }
 
